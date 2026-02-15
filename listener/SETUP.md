@@ -10,6 +10,12 @@ When you run this program during a Rutgers baseball game:
 3. If the announcer says "Sand", "Chris Sand", "number 44", etc.
 4. You get a text message on your phone within ~45 seconds
 
+## Cost: Basically Free
+
+- **Whisper AI** runs locally on your PC — **$0**
+- **Twilio** texts cost ~$0.01 each. Free trial gives you $15 credit (1,500 texts)
+- **Everything else** is free and open source
+
 ## One-Time Setup (Do This Once)
 
 ### Step 1: Install Node.js
@@ -64,7 +70,32 @@ VB-Cable creates a virtual speaker that lets our program "hear" what your comput
    **NOTE:** You won't hear audio from your speakers while this is active!
    To hear audio AND capture it, see "Bonus: Hear Audio Too" at the bottom.
 
-### Step 4: Sign Up for Twilio (sends text messages)
+### Step 4: Install Whisper (FREE AI transcription)
+
+Whisper is the AI that converts the announcer's voice to text. It runs on your PC — no cloud, no cost.
+
+1. Go to https://github.com/ggerganov/whisper.cpp/releases
+2. Scroll down to **Assets** under the latest release
+3. Download **whisper-bin-x64.zip** (the Windows version)
+4. Create a folder: `C:\whisper`
+5. Extract the zip contents into `C:\whisper`
+   - You should now have `C:\whisper\main.exe` (this is the program)
+6. **Download the AI model** (one-time, ~150MB):
+   - Double-click **download-model.bat** in the `listener` folder
+   - OR manually download from: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+   - Save it to: `C:\whisper\models\ggml-base.en.bin`
+7. To verify: open Command Prompt and type:
+   ```
+   C:\whisper\main.exe --help
+   ```
+   You should see a list of options (not "not found")
+
+**Which model to choose?**
+- `base.en` (150MB) — Fast, good enough for catching names. **Start with this.**
+- `small.en` (500MB) — More accurate, slower. Try if base misses too many mentions.
+- `medium.en` (1.5GB) — Very accurate, needs a decent PC. Use if you have a gaming PC.
+
+### Step 5: Sign Up for Twilio (sends text messages)
 
 1. Go to https://www.twilio.com/try-twilio
 2. Create a free account
@@ -75,13 +106,6 @@ VB-Cable creates a virtual speaker that lets our program "hear" what your comput
 5. Click "Get a Trial Number" - this gives you a phone number to SEND texts from
 6. Write down all three: Account SID, Auth Token, and your Twilio phone number
 
-### Step 5: Sign Up for Replicate (AI transcription)
-
-1. Go to https://replicate.com
-2. Sign up with GitHub or Google
-3. Go to https://replicate.com/account/api-tokens
-4. Click "Create token" and copy it
-
 ### Step 6: Configure the App
 
 1. Open the `listener` folder in File Explorer
@@ -89,13 +113,14 @@ VB-Cable creates a virtual speaker that lets our program "hear" what your comput
 3. Open `.env` in Notepad and fill in your values:
    ```
    YOUR_PHONE_NUMBER=+12125551234    ← your actual phone, with +1
-   TWILIO_ACCOUNT_SID=AC...          ← from Step 4
-   TWILIO_AUTH_TOKEN=...             ← from Step 4
-   TWILIO_PHONE_NUMBER=+1...         ← from Step 4
-   REPLICATE_API_TOKEN=r8_...        ← from Step 5
+   TWILIO_ACCOUNT_SID=AC...          ← from Step 5
+   TWILIO_AUTH_TOKEN=...             ← from Step 5
+   TWILIO_PHONE_NUMBER=+1...         ← from Step 5
    FLOCOLLEGE_EMAIL=your@email.com   ← your FloCollege login
    FLOCOLLEGE_PASSWORD=yourpassword  ← your FloCollege password
    ```
+   The Whisper paths default to `C:\whisper\main.exe` and `C:\whisper\models\ggml-base.en.bin`.
+   Only change them if you put whisper.cpp somewhere else.
 4. Save the file
 
 ### Step 7: Install the App Dependencies
@@ -125,7 +150,7 @@ You should get a text on your phone. If not, double-check your Twilio settings.
 ```
 npm run test-whisper
 ```
-This records 10 seconds of audio and transcribes it. Play some music or talk to test.
+This records 10 seconds of audio and transcribes it locally using Whisper. Play some music or talk to test.
 
 ## Game Day! (Do This Each Game)
 
@@ -182,6 +207,12 @@ Now audio plays through speakers AND VB-Cable captures it.
 
 ## Troubleshooting
 
+**"Cannot find whisper.cpp at C:\whisper\main.exe"**
+→ You didn't extract whisper.cpp to the right place. Make sure `C:\whisper\main.exe` exists.
+
+**"Cannot find model"**
+→ Run `download-model.bat` or manually download the model file (see Step 4.6).
+
 **"FFmpeg not found"**
 → You didn't add FFmpeg to your PATH correctly. Redo Step 2.6.
 
@@ -197,10 +228,11 @@ Now audio plays through speakers AND VB-Cable captures it.
 **"Chrome won't open"**
 → Make sure Google Chrome is installed in the default location.
 
+**Whisper is too slow on my PC**
+→ The `base.en` model should transcribe 30 seconds of audio in about 5-15 seconds on most PCs. If it's taking longer than 30 seconds per chunk, your PC might be too slow. Try closing other programs while the listener runs.
+
 ## Costs
 
-- **Twilio:** ~$0.01 per text message. Free trial gives you $15 credit (1,500 texts).
-- **Replicate/Whisper:** ~$0.01-0.02 per 30-second chunk. A 3-hour game = ~360 chunks = ~$5-7.
-- **Total per game:** About $5-7 if listening the whole time.
-
-To reduce cost, only start the listener when the game is competitive and relief pitchers might come in (usually after the 5th inning).
+- **Whisper:** FREE (runs on your PC)
+- **Twilio:** ~$0.01 per text message. Free trial gives you $15 credit (1,500 texts)
+- **Total per game:** Essentially $0 (a few cents in texts)

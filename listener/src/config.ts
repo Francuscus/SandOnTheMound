@@ -36,9 +36,14 @@ export const config = {
     phoneNumber: requireEnv("TWILIO_PHONE_NUMBER"),
   },
 
-  // Replicate (Whisper)
-  replicate: {
-    apiToken: requireEnv("REPLICATE_API_TOKEN"),
+  // Whisper (local - free!)
+  whisper: {
+    executablePath:
+      process.env.WHISPER_EXECUTABLE_PATH ||
+      "C:\\whisper\\main.exe",
+    modelPath:
+      process.env.WHISPER_MODEL_PATH ||
+      "C:\\whisper\\models\\ggml-base.en.bin",
   },
 
   // FloCollege

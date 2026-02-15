@@ -1,0 +1,23 @@
+{
+  "name": "sand-on-the-mound-listener",
+  "version": "1.0.0",
+  "description": "Listens to FloCollege baseball streams and texts you when your player is mentioned",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npx tsx src/index.ts",
+    "listen": "npx tsx src/index.ts",
+    "test-sms": "npx tsx src/test-sms.ts",
+    "test-whisper": "npx tsx src/test-whisper.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "puppeteer": "^21.7.0",
+    "replicate": "^0.25.1",
+    "twilio": "^4.20.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  }
+}
